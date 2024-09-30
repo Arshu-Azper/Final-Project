@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
   res.send('Server is running.');
 });
 app.get('/hi', (req,res) => {
-  res.send('Hi');
+  res.send('Hi from server');
 });
 // Registration route
 app.post('/register', async (req, res) => {

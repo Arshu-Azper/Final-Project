@@ -35,8 +35,8 @@ export default function HomeScreen() {
       }
     }
 
-    const url = isLoggingIn ? 'http://localhost:5000/login' : 'http://localhost/register'; //will need to change ip to the ip of the device
-    const body = isLoggingIn ? { username: email, password } : { username: email, password };
+    const url = isLoggingIn ? 'http://localhost:5000/login' : 'http://localhost:5000/register'; //will need to change ip to the ip of the device
+    const body = isLoggingIn ? { username: email, password } : { username: email, password, firstName, lastName };
 
     try {
       const response = await fetch(url, {

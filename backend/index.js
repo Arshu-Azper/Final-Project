@@ -34,7 +34,7 @@ app.get('/hi', (req,res) => {
 // Registration route
 app.post('/register', async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, password, firstName, lastName } = req.body;
 
     // Check if the user already exists
     const existingUser = await User.findOne({ username });
@@ -46,7 +46,7 @@ app.post('/register', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create new user
-    const newUser = new User({ username, password: hashedPassword });
+    const newUser = new User({ username, password: hashedPassword, firstName, lastName });
     await newUser.save();
 
     res.status(201).json({ message: 'User registered successfully' });
@@ -63,19 +63,22 @@ app.post('/login', async (req, res) => {
     // Check if user exists
     const user = await User.findOne({ username });
     if (!user) {
+      console.log("1a")
       return res.status(400).json({ message: 'Invalid credentials' });
     }
-
+    console.log("1")
     // Check if password matches
     const isMatch = await bcrypt.compare(password, user.password);
+    console.log(isMatch);
     if (!isMatch) {
+      console.log("1b")
       return res.status(400).json({ message: 'Invalid credentials' });
     }
-
     // Create and return JWT token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
+  
 
     res.json({ token });
   } catch (error) {

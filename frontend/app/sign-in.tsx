@@ -7,6 +7,9 @@ import {
   View,
 } from 'react-native';
 import React, { useState } from 'react';
+import { router } from 'expo-router';
+
+import { useSession } from '../components/auth';
 
 export default function HomeScreen() {
   //Inputs
@@ -16,11 +19,11 @@ export default function HomeScreen() {
   const [password, setPassword] = useState('');
   //Other Variables
   const [message, setMessage] = useState('');
+  const { signIn } = useSession();
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
   const [loginHeader, setLoginHeader] = useState('Sign Up');
 
-  const [welcome, setWelcome] = useState('');
+
 
   const handlePress = async () => {
     if (isLoggingIn) {
@@ -53,6 +56,8 @@ export default function HomeScreen() {
         if (isLoggingIn && result.token) {
           //Ca save the token for future auth requests
           console.log('JWT Token:', result.token);
+          signIn();
+          router.replace('/');
         }
       } else {
         setMessage(result.message || 'Something went wrong.');
@@ -71,20 +76,9 @@ export default function HomeScreen() {
     setIsLoggingIn(false);
   };
 
-  const loggingIn = () => {
-    handlePress();
-    // setLoggedIn(true);
-    // if (isLoggingIn == false) {
-    //   setWelcome(
-    //     `Welcome ${firstName}, ${lastName}. Remember your login is your email (${email}) and password (${password})`
-    //   );
-    // } else {
-    //   setWelcome(`Logged in with email (${email}) and password (${password})`);
-    // }
-  };
   return (
     <SafeAreaView style={styles.container}>
-      {!loggedIn && (
+
         <View style={styles.loginContainer}>
           <Text style={{ color: 'rgb(33, 150, 243)', fontSize: 60 }}>
             {loginHeader}
@@ -127,7 +121,7 @@ export default function HomeScreen() {
           />
 
           <View style={styles.button}>
-            <Button title="Confirm" onPress={loggingIn} />
+            <Button title="Confirm" onPress={handlePress} />
           </View>
           <Text>{message}</Text>
 
@@ -144,16 +138,7 @@ export default function HomeScreen() {
             </>
           )}
         </View>
-      )}
-      {loggedIn && (
-        <View style={styles.loginContainer}>
-          <Text style={{ color: 'rgb(33, 150, 243)', fontSize: 60 }}>
-            Welcome{isLoggingIn && <Text> Back</Text>}
-          </Text>
-          <Text>{welcome}</Text>
-        </View>
-      )}
-      <Text>{message}</Text>
+  
     </SafeAreaView>
   );
 }

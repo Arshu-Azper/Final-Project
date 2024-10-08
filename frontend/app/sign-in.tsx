@@ -76,6 +76,10 @@ export default function HomeScreen() {
     setIsLoggingIn(false);
   };
 
+  const testSign = () => {
+    signIn();
+    router.replace('/');
+  }
   return (
     <SafeAreaView style={styles.container}>
 
@@ -121,7 +125,7 @@ export default function HomeScreen() {
           />
 
           <View style={styles.button}>
-            <Button title="Confirm" onPress={handlePress} />
+            <Button title="Confirm" onPress={testSign} />
           </View>
           <Text>{message}</Text>
 

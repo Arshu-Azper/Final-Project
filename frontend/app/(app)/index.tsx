@@ -7,9 +7,10 @@ import { useSession } from '../../components/auth';
 
 export default function WelcomeScreen() {
     const { signOut } = useSession();
+    
   const handleLogout = async () => {
     await AsyncStorage.removeItem('token');
-    router.replace('/sign-in');
+    router.replace('../sign-in');
     signOut();
   };
 

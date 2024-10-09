@@ -6,10 +6,11 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { router } from 'expo-router';
 
 import { useSession } from '../components/auth';
+
 
 export default function HomeScreen() {
   //Inputs
@@ -19,11 +20,17 @@ export default function HomeScreen() {
   const [password, setPassword] = useState('');
   //Other Variables
   const [message, setMessage] = useState('');
-  const { signIn } = useSession();
+  const { signIn, session } = useSession();
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [loginHeader, setLoginHeader] = useState('Sign Up');
 
-
+  useEffect(() => {
+    if (session == true) {
+      // On web, static rendering will stop here as the user is not authenticated
+      // in the headless Node process that the pages are rendered in.
+      router.replace('/');
+    }
+  })
 
   const handlePress = async () => {
     if (isLoggingIn) {
@@ -133,6 +140,7 @@ export default function HomeScreen() {
             <>
               <Text>Already have an account?</Text>
               <Button title="Login" onPress={goToLogin} />
+              <Button title="Console" onPress={() => {console.log(session)}} />
             </>
           )}
           {isLoggingIn && (

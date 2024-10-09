@@ -31,47 +31,44 @@ export function useSession() {
 function getInfo()
 {
   const [token, setToken] = useState<string | null>();
+  const [ session, setSession] = useState(Boolean);
+  const [loading, setLoading] = useState(Boolean);
 
   useEffect( () => {
     async function getToken(){
-      console.log('t')
-      // const tokenResult = await AsyncStorage.getItem('token');
+       //const tokenResult = await AsyncStorage.getItem('token');
       const tokenResult = await 'temp';
-      console.log(tokenResult)
       setToken(tokenResult)
+      if(tokenResult != undefined)
+      {
+        setSession(true);
+      }else
+      {
+        setSession(false);
+      }
+      setLoading(false);
     }
-    console.log('I cry')
     getToken(); 
-}, [setToken]);
-console.log(token)
-  return [token];
+}, []);
+  return session;
 }
 
 export function SessionProvider({ children }: PropsWithChildren) {
-  const token = getInfo();
-  console.log(getInfo())
-  const [loading, setLoading] = useState(false);
-  const [ session, setSession] = useState(false);
-
-
-  if(!token){
-    console.log("token:", token)
-    setSession(false); 
-  }
-
+  // const token = getInfo();
+  let session = getInfo();
+  console.log(session)
 
   return (
     <AuthContext.Provider
       value={{
         signIn: () => {
           // Perform sign-in logic here
-          setSession(true);
+          session = true;
         },
         signOut: () => {
-          setSession(false);
+          session = false;
         },
         session,
-        loading
       }}>
       {children}
     </AuthContext.Provider>

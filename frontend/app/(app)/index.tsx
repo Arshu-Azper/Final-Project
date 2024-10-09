@@ -6,12 +6,12 @@ import { router } from 'expo-router';
 import { useSession } from '../../components/auth';
 
 export default function WelcomeScreen() {
-    const { signOut } = useSession();
+    const { signOut, session } = useSession();
     
   const handleLogout = async () => {
     await AsyncStorage.removeItem('token');
-    router.replace('../sign-in');
     signOut();
+    router.replace('../sign-in');
   };
 
 
@@ -19,6 +19,7 @@ export default function WelcomeScreen() {
     <SafeAreaView style={styles.container}>
       <Text style={styles.headerText}>Welcome!</Text>
       <Button title="Logout" onPress={handleLogout} />
+      <Button title="Console" onPress={() => {console.log(session)}} />
     </SafeAreaView>
   );
 }

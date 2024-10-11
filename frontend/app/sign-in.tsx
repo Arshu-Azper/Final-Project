@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { router } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 import { useSession } from '../components/auth';
 
@@ -62,8 +64,11 @@ export default function HomeScreen() {
         setMessage(isLoggingIn ? 'Login Successful' : 'Registration Successful');
         if (isLoggingIn && result.token) {
           //Ca save the token for future auth requests
+          await AsyncStorage.setItem('token', result.token);
           console.log('JWT Token:', result.token);
+          console.log(session)
           signIn();
+          console.log(session)
           router.replace('/');
         }
       } else {
@@ -132,7 +137,7 @@ export default function HomeScreen() {
           />
 
           <View style={styles.button}>
-            <Button title="Confirm" onPress={testSign} />
+            <Button title="Confirm" onPress={handlePress} />
           </View>
           <Text>{message}</Text>
 
@@ -141,6 +146,7 @@ export default function HomeScreen() {
               <Text>Already have an account?</Text>
               <Button title="Login" onPress={goToLogin} />
               <Button title="Console" onPress={() => {console.log(session)}} />
+              <Button title="Console2" onPress={async() => {const tokenResult = await AsyncStorage.getItem('token'); console.log(tokenResult)}} />
             </>
           )}
           {isLoggingIn && (

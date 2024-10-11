@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 const AuthContext = createContext<{
   signIn: () => void;
   signOut: () => void;
-  session?: boolean | null;
+  session?: boolean | null ;
   loading?: boolean
 }>({
   signIn: () => null,
@@ -28,45 +28,47 @@ export function useSession() {
 }
 
 
-function getInfo()
+function getSession()
 {
   const [token, setToken] = useState<string | null>();
-  const [ session, setSession] = useState(Boolean);
-  const [loading, setLoading] = useState(Boolean);
+  const [ session, setSession] = useState< boolean | null >();
+  //const [loading, setLoading] = useState(Boolean);
 
   useEffect( () => {
     async function getToken(){
-       //const tokenResult = await AsyncStorage.getItem('token');
-      const tokenResult = await 'temp';
+      const tokenResult = await AsyncStorage.getItem('token');
+      //const tokenResult = await 'temp';
       setToken(tokenResult)
-      if(tokenResult != undefined)
-      {
-        setSession(true);
-      }else
+      if(tokenResult == undefined || tokenResult == null)
       {
         setSession(false);
+      }else
+      {
+        setSession(true);
       }
-      setLoading(false);
+
     }
     getToken(); 
 }, []);
-  return session;
+return {session, setSession}
 }
 
 export function SessionProvider({ children }: PropsWithChildren) {
-  // const token = getInfo();
-  let session = getInfo();
+
+  const {session, setSession} = getSession();
   console.log(session)
 
   return (
     <AuthContext.Provider
       value={{
         signIn: () => {
+          console.log(session)
           // Perform sign-in logic here
-          session = true;
+          setSession(true)
+          console.log(session)
         },
         signOut: () => {
-          session = false;
+          setSession(false)
         },
         session,
       }}>

@@ -11,6 +11,7 @@ export default function WelcomeScreen() {
   const handleLogout = async () => {
     await AsyncStorage.removeItem('token');
     signOut();
+    console.log('t')
     router.replace('../sign-in');
   };
 
@@ -20,6 +21,7 @@ export default function WelcomeScreen() {
       <Text style={styles.headerText}>Welcome!</Text>
       <Button title="Logout" onPress={handleLogout} />
       <Button title="Console" onPress={() => {console.log(session)}} />
+      <Button title="Console2" onPress={async() => {const tokenResult = await AsyncStorage.getItem('token'); console.log(tokenResult)}} />
     </SafeAreaView>
   );
 }

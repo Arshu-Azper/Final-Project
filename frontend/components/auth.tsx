@@ -27,7 +27,7 @@ export function useSession() {
   return value;
 }
 
-
+//Checks the token
 function getSession()
 {
   const [token, setToken] = useState<string | null>();
@@ -53,6 +53,7 @@ function getSession()
 return {session, setSession}
 }
 
+//controlls the auth logic
 export function SessionProvider({ children }: PropsWithChildren) {
 
   const {session, setSession} = getSession();

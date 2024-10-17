@@ -2,6 +2,9 @@ import React from 'react';
 import { SafeAreaView, Text, Button, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
+import Test from '../../components/test'
+
+import SelectDropdown from 'react-native-select-dropdown'
 
 import { useSession } from '../../components/auth';
 
@@ -17,11 +20,11 @@ export default function WelcomeScreen() {
 
 
   return (
+    
     <SafeAreaView style={styles.container}>
       <Text style={styles.headerText}>Welcome!</Text>
       <Button title="Logout" onPress={handleLogout} />
-      <Button title="Console" onPress={() => {console.log(session)}} />
-      <Button title="Console2" onPress={async() => {const tokenResult = await AsyncStorage.getItem('token'); console.log(tokenResult)}} />
+      <Test></Test>
     </SafeAreaView>
   );
 }

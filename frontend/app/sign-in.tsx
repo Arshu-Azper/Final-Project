@@ -23,8 +23,8 @@ export default function HomeScreen() {
   //Other Variables
   const [message, setMessage] = useState('');
   const { signIn, session } = useSession();
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [loginHeader, setLoginHeader] = useState('Sign Up');
+  const [isLoggingIn, setIsLoggingIn] = useState(true);
+  const [loginHeader, setLoginHeader] = useState('Login');
 
   useEffect(() => {
     if (session == true) {
@@ -47,9 +47,9 @@ export default function HomeScreen() {
       }
     }
 
-    const url = isLoggingIn ? 'http://localhost:5000/login' : 'http://localhost:5000/register'; //will need to change ip to the ip of the device
+    const url = isLoggingIn ? 'http://192.168.1.158:5000/users/login' : 'http://192.168.1.158:5000/users/register'; //will need to change ip to the ip of the device
     const body = isLoggingIn ? { username: email, password } : { username: email, password, firstName, lastName };
-
+    console.log(body)
     try {
       const response = await fetch(url, {
         method: 'POST',
@@ -62,13 +62,11 @@ export default function HomeScreen() {
       const result = await response.json();
       if (response.ok) {
         setMessage(isLoggingIn ? 'Login Successful' : 'Registration Successful');
-        if (isLoggingIn && result.token) {
-          //Ca save the token for future auth requests
+        if (result.token) {
+          
           await AsyncStorage.setItem('token', result.token);
-          console.log('JWT Token:', result.token);
-          console.log(session)
+          console.log(result)
           signIn();
-          console.log(session)
           router.replace('/');
         }
       } else {
@@ -145,8 +143,6 @@ export default function HomeScreen() {
             <>
               <Text>Already have an account?</Text>
               <Button title="Login" onPress={goToLogin} />
-              <Button title="Console" onPress={() => {console.log(session)}} />
-              <Button title="Console2" onPress={async() => {const tokenResult = await AsyncStorage.getItem('token'); console.log(tokenResult)}} />
             </>
           )}
           {isLoggingIn && (
@@ -167,7 +163,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'gray',
     padding: 8,
-    margin: 10,
   },
   loginContainer: {
     gap: 10,

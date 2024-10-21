@@ -1,25 +1,15 @@
 import React from "react";
 import { SafeAreaView, Text, Button, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { router } from "expo-router";
-import Test from "../../components/test";
-
-import SelectDropdown from "react-native-select-dropdown";
+import DropDown from "../../components/profileDropDown";
 
 import { useSession } from "../../components/auth";
 
 export default function WelcomeScreen() {
   const { signOut, session } = useSession();
 
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem("token");
-    signOut();
-    console.log("t");
-    router.replace("../sign-in");
-  };
-
   const testingDebug = async () => {
-    const url = "http://192.168.1.158:5000/users/test";
+    const url = "http://192.168.1.158:5000/users/verify";
     const tokenResult = await AsyncStorage.getItem("token");
     const body = { token: tokenResult };
 
@@ -33,9 +23,13 @@ export default function WelcomeScreen() {
       });
 
       const result = await response.json();
-      console.log(result);
+      
+      if(result.error)
+      {
+        signOut()
+      }
     } catch (error) {
-      console.log('error', error);
+      //console.log('error', error);
     }
   };
 
@@ -43,9 +37,6 @@ export default function WelcomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.headerText}>Welcome!</Text>
-      <Button title="Logout" onPress={handleLogout} />
-      <Button title="Test" onPress={testingDebug} />
-      <Test></Test>
     </SafeAreaView>
   );
 }

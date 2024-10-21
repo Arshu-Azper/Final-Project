@@ -26,7 +26,7 @@ router.post("/register", async (req, res) => {
         });
         
         const user = await newUser.save();
-        console.log(firstName)
+        
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
             expiresIn: "1h",
         });
@@ -57,8 +57,6 @@ router.post("/login", async (req, res) => {
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
             expiresIn: "1h",
         });
-        console.log(user)
-        console.log(token)
         res.json({ token });
     } catch (error) {
         res.status(500).json({ error: "Failed to login" });
@@ -66,24 +64,27 @@ router.post("/login", async (req, res) => {
     }
 });
 
-router.post("/test", async (req, res)=>
+router.post("/verify", async (req, res)=>
 {
     try{
         const{token} = req.body;
+      
         var decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log(decoded)
-
+        
         userID =decoded.id;
         
         const user = await User.findById(userID);
-        
-        res.json({user})
+        if(user == null)
+        {
+            throw new TypeError('No User');
+        }
+        res.status(200).json({success: 'Valid Token' });
 
     } catch (error) {
         res.status(500).json({ error: "Failed to test" });
         console.error("Error:", error);
     }
 });
-// var decoded = jwt.verify(token, 'shhhhh');
+
 
 module.exports = router;

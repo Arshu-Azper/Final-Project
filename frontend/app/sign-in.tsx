@@ -49,7 +49,7 @@ export default function HomeScreen() {
 
     const url = isLoggingIn ? 'http://192.168.1.158:5000/users/login' : 'http://192.168.1.158:5000/users/register'; //will need to change ip to the ip of the device
     const body = isLoggingIn ? { username: email, password } : { username: email, password, firstName, lastName };
-    console.log(body)
+    
     try {
       const response = await fetch(url, {
         method: 'POST',
@@ -65,7 +65,7 @@ export default function HomeScreen() {
         if (result.token) {
           
           await AsyncStorage.setItem('token', result.token);
-          console.log(result)
+          
           signIn();
           router.replace('/');
         }

@@ -1,13 +1,18 @@
-import { useContext, createContext, type PropsWithChildren, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useState } from 'react';
-
+import {
+  useContext,
+  createContext,
+  type PropsWithChildren,
+  useEffect,
+} from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useState } from "react";
+import { router } from "expo-router";
 
 const AuthContext = createContext<{
   signIn: () => void;
   signOut: () => void;
-  session?: boolean | null ;
-  loading?: boolean
+  session?: boolean | null;
+  loading?: boolean;
 }>({
   signIn: () => null,
   signOut: () => null,
@@ -18,9 +23,9 @@ const AuthContext = createContext<{
 // This hook can be used to access the user info.
 export function useSession() {
   const value = useContext(AuthContext);
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== "production") {
     if (!value) {
-      throw new Error('useSession must be wrapped in a <SessionProvider />');
+      throw new Error("useSession must be wrapped in a <SessionProvider />");
     }
   }
 
@@ -28,49 +33,70 @@ export function useSession() {
 }
 
 //Checks the token
-function getSession()
-{
+function getSession() {
   const [token, setToken] = useState<string | null>();
-  const [ session, setSession] = useState< boolean | null >();
-  //const [loading, setLoading] = useState(Boolean);
+  const [session, setSession] = useState<boolean | null>();
 
-  useEffect( () => {
-    async function getToken(){
-      const tokenResult = await AsyncStorage.getItem('token');
-      //const tokenResult = await 'temp';
-      setToken(tokenResult)
-      if(tokenResult == undefined || tokenResult == null)
-      {
+  useEffect(() => {
+    async function getToken() {
+      const tokenResult = await AsyncStorage.getItem("token");
+
+      setToken(tokenResult);
+      if (tokenResult == undefined || tokenResult == null) {
+        await AsyncStorage.removeItem("token");
+
+        router.replace("../sign-in");
         setSession(false);
-      }else
-      {
-        setSession(true);
-      }
+      } else {
+        const url = "http://192.168.1.158:5000/users/verify";
+        const tokenResult = await AsyncStorage.getItem("token");
+        const body = { token: tokenResult };
 
+        try {
+          const response = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+          });
+
+          const result = await response.json();
+          if (result.error) {
+            throw new TypeError('Failed');
+          }
+          setSession(true);
+        } catch (error) {
+          console.log("error", error);
+          await AsyncStorage.removeItem("token");
+
+          router.replace("../sign-in");
+          setSession(false);
+        }
+      }
     }
-    getToken(); 
-}, []);
-return {session, setSession}
+    getToken();
+  }, []);
+  return { session, setSession };
 }
 
 //controlls the auth logic
 export function SessionProvider({ children }: PropsWithChildren) {
-
-  const {session, setSession} = getSession();
- 
+  const { session, setSession } = getSession();
 
   return (
     <AuthContext.Provider
       value={{
         signIn: () => {
           // Perform sign-in logic here
-          setSession(true)
+          setSession(true);
         },
         signOut: () => {
-          setSession(false)
+          setSession(false);
         },
         session,
-      }}>
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

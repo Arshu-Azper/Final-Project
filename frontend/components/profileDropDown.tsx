@@ -5,20 +5,11 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import React, { useRef, useState } from 'react';
 
 import { useSession } from "./auth";
-import{workAround} from './workAroundHook'
 
-type propValue = {
-  parentControll: boolean;
-}
 
-export default function DropDown(props: propValue) {
+export default function DropDown() {
   const { signOut, session } = useSession();
-  const {reload, setReload} = workAround();
 
-  function test() {
-    setReload(false)
-    router.push('/profile');
-  }
   const profileOptions = [
     { title: "Theme", backGround: "#fff", text: "#000" },
     { title: "View Profile", backGround: "#fff", text: "#000" },
@@ -27,8 +18,7 @@ export default function DropDown(props: propValue) {
 
 
   return (
-   <>
-   {props.parentControll &&(
+
     <SelectDropdown
       data={profileOptions}
       onSelect={(selectedItem, index) => {
@@ -56,7 +46,7 @@ export default function DropDown(props: propValue) {
               </Text>
             )}
             {item.title == "View Profile" && (
-              <Pressable onPress={test}>
+              <Pressable>
                   <View>
                     <Text
                       style={{
@@ -83,8 +73,7 @@ export default function DropDown(props: propValue) {
       showsVerticalScrollIndicator={false}
       dropdownStyle={styles.dropdownMenuStyle}
     />
-  )}
-    </>
+
   );
 }
 

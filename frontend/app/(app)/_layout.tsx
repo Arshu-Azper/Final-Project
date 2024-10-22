@@ -1,7 +1,6 @@
 import { Redirect, Stack, router, Link } from 'expo-router';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Pressable, Button } from "react-native";
-import { useState } from 'react';
+import { Pressable } from "react-native";
 
 import { useSession } from '../../components/auth';
 
@@ -12,12 +11,11 @@ export default function AppLayout() {
   if (session == false) {
     return <Redirect href='../sign-in' />;
   }
-  const [tester, setTester] = useState(true);
-  // This layout can be deferred because it's not the root layout.
+
   return (
     
     <Stack screenOptions={{headerStyle:{
-      backgroundColor: "#2196f3"
+      backgroundColor: "#1e6091"
     },
     headerTintColor: '#fff',
     headerTitleAlign: 'center',
@@ -33,7 +31,7 @@ export default function AppLayout() {
           </Pressable>
         </Link>
         ) }} />
-    <Stack.Screen name='profile' options={{title:'profile'}} />
+    <Stack.Screen name='profile' options={{title:'Profile'}} />
   </Stack>
   )
 }

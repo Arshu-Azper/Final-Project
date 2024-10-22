@@ -86,5 +86,26 @@ router.post("/verify", async (req, res)=>
     }
 });
 
+router.post("/info", async (req, res)=>
+    {
+        try{
+            const{token} = req.body;
+          
+            var decoded = jwt.verify(token, process.env.JWT_SECRET);
+            
+            userID =decoded.id;
+            
+            const user = await User.findById(userID);
+            if(user == null)
+            {
+                throw new TypeError('No User');
+            }
+            res.status(200).json({user});
+    
+        } catch (error) {
+            res.status(500).json({ error: "Failed to test" });
+            console.error("Error:", error);
+        }
+    });
 
 module.exports = router;

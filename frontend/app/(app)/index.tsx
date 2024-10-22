@@ -1,7 +1,7 @@
 import React from "react";
-import { SafeAreaView, Text, Button, StyleSheet } from "react-native";
+import { SafeAreaView, Text, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import DropDown from "../../components/profileDropDown";
+
 
 import { useSession } from "../../components/auth";
 

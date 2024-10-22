@@ -38,7 +38,7 @@ function getSession() {
   const [session, setSession] = useState<boolean | null>();
 
   useEffect(() => {
-    async function getToken() {
+    async function getTokenValidation() {
       const tokenResult = await AsyncStorage.getItem("token");
 
       setToken(tokenResult);
@@ -49,7 +49,6 @@ function getSession() {
         setSession(false);
       } else {
         const url = "http://192.168.1.158:5000/users/verify";
-        const tokenResult = await AsyncStorage.getItem("token");
         const body = { token: tokenResult };
 
         try {
@@ -75,7 +74,7 @@ function getSession() {
         }
       }
     }
-    getToken();
+    getTokenValidation();
   }, []);
   return { session, setSession };
 }
@@ -88,7 +87,6 @@ export function SessionProvider({ children }: PropsWithChildren) {
     <AuthContext.Provider
       value={{
         signIn: () => {
-          // Perform sign-in logic here
           setSession(true);
         },
         signOut: () => {

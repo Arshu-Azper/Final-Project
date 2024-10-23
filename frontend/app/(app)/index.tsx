@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView, Text, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -6,37 +6,36 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSession } from "../../components/auth";
 
 export default function WelcomeScreen() {
-  const { signOut, session } = useSession();
+  //const { signOut, session } = useSession();
+  const [loginType, setLoginType] = useState();
+  const [displayMessage, setDisplayMessage] = useState('');
 
-  const testingDebug = async () => {
-    const url = "http://192.168.1.158:5000/users/verify";
-    const tokenResult = await AsyncStorage.getItem("token");
-    const body = { token: tokenResult };
-
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
-
-      const result = await response.json();
-      
-      if(result.error)
-      {
-        signOut()
+  useEffect(() => {
+    async function getFromStorage() {
+      try {
+        const result = await AsyncStorage.getItem("loginType");
+        const resultFirstName = await AsyncStorage.getItem("firstName");
+        const resultLastName = await AsyncStorage.getItem("lastName");
+        if (result != null && resultFirstName != null && resultLastName != null) {
+          if (result == 'login') {
+            setDisplayMessage('Welcome back,' + { resultFirstName })
+            
+          }
+        }
+        else{
+          throw new TypeError('Type is Null');
+        }
       }
-    } catch (error) {
-      //console.log('error', error);
-    }
-  };
+      catch (error) {
 
+      }
+    }
+    getFromStorage()
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.headerText}>Welcome!</Text>
+      <Text style={styles.headerText}>{displayMessage}</Text>
     </SafeAreaView>
   );
 }

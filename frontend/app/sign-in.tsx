@@ -13,26 +13,30 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSession } from "../components/auth";
 
 export default function HomeScreen() {
-  //Inputs
+  //Auth Handle
+  const { signIn, session } = useSession();
+
+  //Inputs Variables
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  //Other Variables
-  const [message, setMessage] = useState("");
-  const { signIn, session } = useSession();
+
+  //Controlling Variables
   const [isLoggingIn, setIsLoggingIn] = useState(true);
+
+  //Dynamic Text Variables
+  const [message, setMessage] = useState("");
   const [loginHeader, setLoginHeader] = useState("Login");
 
+  //Will redirect user if session becomes true
   useEffect(() => {
     if (session == true) {
-      // On web, static rendering will stop here as the user is not authenticated
-      // in the headless Node process that the pages are rendered in.
       router.replace("/");
     }
   });
 
-  const handlePress = async () => {
+  const loginUserHandle = async () => {
     if (isLoggingIn) {
       if (email === "" || password === "") {
         setMessage("Fill out fields");
@@ -68,12 +72,12 @@ export default function HomeScreen() {
 
       const result = await response.json();
       if (response.ok) {
-        setMessage(
-          isLoggingIn ? "Login Successful" : "Registration Successful"
-        );
         if (result.token) {
+
+          isLoggingIn ?  await AsyncStorage.setItem("loginType", 'login'): await AsyncStorage.setItem("loginType", 'signUp')
           await AsyncStorage.setItem("token", result.token);
-          await userInfo();
+          await setUserInfo();
+          
           signIn();
           router.replace("/");
         }
@@ -86,7 +90,7 @@ export default function HomeScreen() {
   };
 
 
-  async function userInfo() {
+  async function setUserInfo() {
     const tokenResult = await AsyncStorage.getItem("token");
     const url = "http://192.168.1.158:5000/users/info";
     const body = { token: tokenResult };
@@ -103,7 +107,7 @@ export default function HomeScreen() {
       const result = await response.json();
       await AsyncStorage.setItem("firstName", result.user.firstName);
       await AsyncStorage.setItem("lastName", result.user.lastName);
-      
+
       if (result.error) {
         throw new TypeError('Failed');
       }
@@ -113,6 +117,7 @@ export default function HomeScreen() {
 
     }
   }
+
 
   const goToLogin = () => {
     setLoginHeader("Login");
@@ -168,7 +173,7 @@ export default function HomeScreen() {
           placeholder="Enter Your Password"
         />
 
-        <Pressable onPress={handlePress} className="px-12 py-2 m-3 bg-white rounded-md"
+        <Pressable onPress={loginUserHandle} className="px-12 py-2 m-3 bg-white rounded-md"
         >
           <View>
             <Text className="text-xl text-black ">Confirm</Text>

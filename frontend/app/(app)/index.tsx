@@ -1,33 +1,42 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, Text, StyleSheet } from "react-native";
+import { SafeAreaView, Text, StyleSheet, Pressable, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {Link } from 'expo-router';
 
 
 import { useSession } from "../../components/auth";
 
 export default function WelcomeScreen() {
-  //const { signOut, session } = useSession();
-  const [loginType, setLoginType] = useState();
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [displayMessage, setDisplayMessage] = useState('');
 
+  //Pull Info from Local Storage
   useEffect(() => {
     async function getFromStorage() {
       try {
         const result = await AsyncStorage.getItem("loginType");
-        const resultFirstName = await AsyncStorage.getItem("firstName");
         const resultLastName = await AsyncStorage.getItem("lastName");
-        if (result != null && resultFirstName != null && resultLastName != null) {
+        const resultFirstName = await AsyncStorage.getItem("firstName");
+
+        if (resultLastName != null) {
+          setLastName(resultLastName)
+        }
+        if (resultFirstName != null) {
+          setFirstName(resultFirstName)
+        }
+        if (result != null) {
           if (result == 'login') {
-            setDisplayMessage('Welcome back,' + { resultFirstName })
-            
+            setDisplayMessage('Welcome back,')
+
           }
         }
-        else{
+        else {
           throw new TypeError('Type is Null');
         }
       }
       catch (error) {
-
+        console.log('Error')
       }
     }
     getFromStorage()
@@ -35,7 +44,12 @@ export default function WelcomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.headerText}>{displayMessage}</Text>
+      <Text style={styles.headerText}>{displayMessage} {firstName} {lastName}.</Text>
+      <Link href='/(app)/ar' asChild>
+      <Pressable>
+          <Text>Testing</Text>
+      </Pressable>
+      </Link>
     </SafeAreaView>
   );
 }

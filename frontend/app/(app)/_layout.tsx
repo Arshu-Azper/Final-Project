@@ -1,6 +1,7 @@
 import { Redirect, Stack, router, Link } from 'expo-router';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Pressable } from "react-native";
+import UserIcon from '../../components/userIcon'
 
 import { useSession } from '../../components/auth';
 
@@ -27,7 +28,7 @@ export default function AppLayout() {
       options={{ title:"Home", headerRight: () => (
         <Link href='/profile' asChild>
           <Pressable>
-            <FontAwesome name="user-circle" size={24} color="white" />
+            <UserIcon colorBorder='white' containerSize={36}/>
           </Pressable>
         </Link>
         ) }} />

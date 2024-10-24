@@ -1,77 +1,60 @@
+//External Imports
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useEffect, useState } from "react";
 import { Pressable, Text, View, StyleSheet, TextInput } from "react-native";
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { useSession } from "../../components/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+//Internal Imports
+import { useSession } from "../../components/auth";
+import UserIcon from '../../components/userIcon'
+import ProfileModal from "@/components/profileModal";
 
-function getFirstName() {
-    const [firstName, setFirstName] = useState<string>();
-    useEffect(() => {
-        async function getFromStorage() {
-            const result = await AsyncStorage.getItem("firstName");
-            if (result != null) {
-                setFirstName(result)
-            }
-        }
-        getFromStorage()
-    })
-    return { firstName, setFirstName }
-}
-function getLastName() {
-    const [lastName, setLastName] = useState<string>();
-    useEffect(() => {
-        async function getFromStorage() {
-            const result = await AsyncStorage.getItem("lastName");
-
-            if (result != null) {
-                setLastName(result)
-            }
-        }
-        getFromStorage()
-    })
-    return { lastName, setLastName }
-}
 
 export default function Profile() {
+    //Auth Controll
     const { signOut, session } = useSession();
+    const [modalVisible, setModalVisible] = useState(false);
 
-    const { firstName, setFirstName } = getFirstName();
-    const {lastName, setLastName} = getLastName();
-    const [changableFirstName, setChangableFirstName] = useState(firstName)
-    const [changableLastName, setChangableLastName] = useState(lastName)
-    setChangableLastName(lastName)
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
 
-    async function updateName(dataStorageName: string,dataName: string | undefined, changeableDataName: string |undefined)
-    {
-        if(dataName != changeableDataName && changeableDataName != undefined)
-        {
-            await AsyncStorage.setItem(dataStorageName, changeableDataName);
+    //At first render
+    useEffect(() => {
+        async function getFromStorage() {
+            const resultLastName = await AsyncStorage.getItem("lastName");
+            const resultFirstName = await AsyncStorage.getItem("firstName");
+
+            if (resultLastName != null) {
+                setLastName(resultLastName)
+            }
+            if (resultFirstName != null) {
+                setFirstName(resultFirstName)
+            }
         }
-    }
+        getFromStorage()
+    }, [])
 
 
     return (
         <SafeAreaView style={styles.container}>
-            <FontAwesome name="user-circle" size={122} color="Black" />
-            <TextInput
-                className="w-2/3 px-2 py-1 text-base text-center text-white rounded-2xl bg-secondary"
-                onChangeText={(text) => {setChangableFirstName(text),  updateName('firstName', firstName, changableFirstName)}}
-                value={changableFirstName}
-                autoCapitalize={"words"} />
-            <TextInput
-                className="w-2/3 px-2 py-1 text-base text-center text-white rounded-2xl bg-secondary"
-                onChangeText={(text) => {setChangableLastName(text), updateName('lastName', lastName, changableLastName)}}
-                value={changableLastName}
-                autoCapitalize={"words"} />
-
-
+            {/* User Icon Holder */}
+            <View className="items-center p-5 border-8 rounded-full aspect-square border-secondary bg-secondary/25">
+                <UserIcon containerSize={122} colorBorder="#168aad"/>
+                <Text className="p-2 text-lg font-semibold text-center">{firstName}, {lastName}</Text>
+            </View>
+            
+            {/* Action Buttons */}
+            <Pressable onPress={() =>{setModalVisible(true)}} className="p-1 border-4 rounded-full border-secondary">
+                <View>
+                    <Text>Update Name</Text>
+                </View>
+            </Pressable>
             <Pressable onPress={() => { signOut() }} className="p-4 mt-20 rounded-xl bg-primary">
                 <View>
                     <Text className="text-3xl text-white">Logout</Text>
                 </View>
             </Pressable>
 
+            <ProfileModal isVisible={modalVisible} firstNamePassed={firstName} lastNamePassed={lastName}/>
         </SafeAreaView>
     )
 }

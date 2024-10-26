@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Modal, View, Text, Pressable, StyleSheet, TextInput } from 'react-native';
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { ThemeColors } from '@/constants/Colors';
 
 

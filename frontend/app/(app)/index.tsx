@@ -1,8 +1,9 @@
 //External Imports
-import React, { useState } from "react";
-import { SafeAreaView, Text, StyleSheet, Pressable, View } from "react-native";
+import React, { useState, createContext } from "react";
+import { ScrollView, Text, StyleSheet, Pressable, View, FlatList } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from '@react-navigation/native';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 //Internal Imports
 import LogoutButton from "@/components/logoutButton";
@@ -13,8 +14,11 @@ export default function WelcomeScreen() {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [displayMessage, setDisplayMessage] = useState('');
+  const [tempCounter, setTempCounter] = useState(0);
 
-  //const [characterList, setCharacterList] = useState()
+
+  const [listCount, setListCount] = useState(0);
+  const [characterList, setCharacterList] = useState<any>([]);
 
   //Pull Info from Local Storage
   useFocusEffect(() => {
@@ -35,7 +39,7 @@ export default function WelcomeScreen() {
             setDisplayMessage('Welcome back,')
 
           }
-          else{
+          else {
             setDisplayMessage('Welcome,')
           }
         }
@@ -48,35 +52,70 @@ export default function WelcomeScreen() {
       }
     }
     getFromStorage()
+
   });
 
+  function addCharacter() {
+    const newObject = { id: tempCounter }
+    setTempCounter(tempCounter + 1)
+    setCharacterList([...characterList, newObject])
+    setListCount(listCount + 1)
+
+  }
+
+  function removeCharacter(position: number) {
+
+    let list = characterList
+    list.splice(position, 1)
+
+    setCharacterList(list)
+    setListCount(listCount - 1)
+  }
+
   return (
-    <SafeAreaView>
-      
+    <ScrollView>
+
       <View style={styles.subHeader}>
-        {/* <Pressable>
-          <View className="bg-white rounded-full py-0.5 px-2">
+        <Pressable onPress={addCharacter}>
+          <View style={styles.subHeaderButton}>
             <Text >Add Character</Text>
           </View>
-        </Pressable> */}
+        </Pressable>
       </View>
-      
+
       <View style={styles.listContainer}>
         <Text style={styles.greetingText}>{displayMessage} {firstName} {lastName}.</Text>
-        {/* {!characterList &&(
-        <View className="flex items-center p-4 rounded bg-primary">
-          <Text className="text-xl text-white">You have no characters</Text>
-          <Pressable>
-            <View className="px-4 py-2 mt-5 bg-white rounded">
-              <Text className="font-bold">Add Character</Text>
+        {listCount == 0 && (
+          <View style={styles.addCharacterContainer}>
+            <Text style={styles.addCharacterHeader}>You have no characters</Text>
+            <Pressable onPress={addCharacter} style={styles.addCharacterButtonContainer}>
+              <View >
+                <Text style={styles.addCharacterButtonText}>Add Character</Text>
+              </View>
+            </Pressable>
+          </View>
+        )}
+
+        <FlatList
+          data={characterList}
+          scrollEnabled={false}
+          keyExtractor={item => item.id}
+          extraData={listCount}
+          renderItem={({ item, index }) => (
+            <View style={styles.characterListContainer}>
+              <Text style={styles.characterListText}>Character {item.id}</Text>
+
+              <Pressable onPress={() => { removeCharacter(index) }}>
+                <AntDesign name="delete" size={24} color="white" />
+              </Pressable>
             </View>
-          </Pressable>
-        </View>
-        )} */}
-        <LogoutButton/>
+          )}
+        />
+
+
+        <LogoutButton />
       </View>
-      
-    </SafeAreaView>
+    </ScrollView>
   );
 }
 
@@ -88,16 +127,61 @@ const styles = StyleSheet.create({
     minHeight: 32,
     paddingHorizontal: 8,
     paddingVertical: 4,
-    backgroundColor: ThemeColors.primary,
-    opacity: .75
+    backgroundColor: ThemeColors['primary/.75'],
   },
   listContainer: {
     alignItems: 'center'
   },
-  greetingText:{
+  greetingText: {
     padding: 10,
     fontSize: 24,
     lineHeight: 32,
-  }
+  },
+  subHeaderButton: {
+    backgroundColor: 'white',
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  //Add Character Sytles
+  addCharacterContainer: {
+
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 4,
+    backgroundColor: ThemeColors['primary'],
+  },
+  addCharacterHeader: {
+    color: 'white',
+    fontSize: 20,
+    lineHeight: 28
+  },
+  addCharacterButtonContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginTop: 20,
+    backgroundColor: 'white',
+    borderRadius: 4
+  },
+  addCharacterButtonText: {
+    fontWeight: 'bold'
+  },
+
+  //Character Styles
+  characterListContainer: {
+    backgroundColor: ThemeColors['primary'],
+    minWidth: '80%',
+    margin: 8,
+    padding: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderRadius: 4
+  },
+  characterListText: {
+    color: 'white',
+    fontSize: 16
+  },
   
+
+
 })

@@ -4,14 +4,12 @@ import { useEffect, useState } from "react";
 import { Pressable, Text, View, StyleSheet, TextInput } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 //Internal Imports
-import { useSession } from "../../components/auth";
+import LogoutButton from "@/components/logoutButton";
 import UserIcon from '../../components/userIcon'
 import ProfileModal from "@/components/profileModal";
 
 
 export default function Profile() {
-    //Auth Controll
-    const { signOut, session } = useSession();
     const [modalVisible, setModalVisible] = useState(false);
 
     const [firstName, setFirstName] = useState('')
@@ -81,12 +79,8 @@ export default function Profile() {
                     <Text>Update Name</Text>
                 </View>
             </Pressable>
-            <Pressable onPress={() => { signOut() }} className="p-4 mt-20 rounded-xl bg-primary">
-                <View>
-                    <Text className="text-3xl text-white">Logout</Text>
-                </View>
-            </Pressable>
-
+            
+            <LogoutButton/>
 
             <ProfileModal isVisible={modalVisible} firstNamePassed={firstName} lastNamePassed={lastName} close={() => { setModalVisible(false) }} updateVisibleName={(updatedFirstName, updatedLastName) => { updateName(updatedFirstName, updatedLastName) }} />
         </SafeAreaView>

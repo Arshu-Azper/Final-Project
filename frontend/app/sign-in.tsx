@@ -128,10 +128,6 @@ export default function HomeScreen() {
     setIsLoggingIn(false);
   };
 
-  const testSign = () => {
-    signIn();
-    router.replace("/");
-  };
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.loginContainer}>

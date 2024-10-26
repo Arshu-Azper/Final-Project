@@ -7,6 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import LogoutButton from "@/components/logoutButton";
 import UserIcon from '../../components/userIcon'
 import ProfileModal from "@/components/profileModal";
+import { ThemeColors } from "@/constants/Colors";
 
 
 export default function Profile() {
@@ -19,7 +20,6 @@ export default function Profile() {
     useEffect(() => {
         getFromStorage()
     }, [])
-
 
     async function getFromStorage() {
         const resultLastName = await AsyncStorage.getItem("lastName");
@@ -68,18 +68,17 @@ export default function Profile() {
     return (
         <SafeAreaView style={styles.container}>
             {/* User Icon Holder */}
-            <View className="items-center border-8 rounded-full p-7 aspect-square border-primary bg-primary/25">
-                <UserIcon containerSize={122} colorBorder="#1e6091" />
-                <Text className="p-3 text-lg font-semibold text-center">{firstName} {lastName}</Text>
+            <View style={styles.profileIcon}>
+                <UserIcon containerSize={122} colorBorder={ThemeColors["primary/.75"]} />
+                <Text style={styles.profileIconText}>{firstName} {lastName}</Text>
             </View>
 
             {/* Action Buttons */}
-            <Pressable onPress={() => { setModalVisible(true) }} className="p-1 border-4 rounded-full border-primary">
+            <Pressable onPress={() => { setModalVisible(true) }} style={styles.updateButton}>
                 <View>
                     <Text>Update Name</Text>
                 </View>
             </Pressable>
-            
             <LogoutButton/>
 
             <ProfileModal isVisible={modalVisible} firstNamePassed={firstName} lastNamePassed={lastName} close={() => { setModalVisible(false) }} updateVisibleName={(updatedFirstName, updatedLastName) => { updateName(updatedFirstName, updatedLastName) }} />
@@ -95,4 +94,27 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 15,
     },
+    profileIcon:{
+        alignItems: 'center',
+        borderColor: ThemeColors["primary"],
+        borderWidth: 8,
+        borderRadius: 999,
+        padding: 28,
+        aspectRatio: 1/1,
+        backgroundColor: ThemeColors["primary/.75"],      
+    },
+    profileIconText:{
+        padding: 12,
+        fontSize: 18,
+        lineHeight: 28,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        color: 'white',
+    },
+    updateButton:{
+        padding: 4,
+        borderColor: ThemeColors['primary'],
+        borderWidth: 4,
+        borderRadius: 999,
+    }
 });

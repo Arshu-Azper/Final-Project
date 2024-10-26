@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Modal, View, Text, Pressable, StyleSheet, TextInput } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ThemeColors } from '@/constants/Colors';
 
 
 type propValue = {
@@ -14,50 +15,44 @@ type propValue = {
 export default function ProfileModal(props: propValue) {
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
-    
-    useEffect(()=>
-    {
+
+    useEffect(() => {
         setLastName(props.lastNamePassed)
         setFirstName(props.firstNamePassed)
-        
+
     }, [props.isVisible])
 
- 
+
     return (
         <Modal transparent visible={props.isVisible}>
-            <View className="items-center justify-center flex-1 bg-gray-100/50">
-                <View className="w-10/12 p-4 bg-white shadow-2xl rounded-2xl shadow-black">
-                    <Text className='text-2xl font-bold text-center'>Update Name</Text>
-                    <View className='items-center justify-center gap-2 p-4 m-3 align-baseline rounded-xl bg-primary/75'>
+            <View style={styles.modalContainer}>
+                <View style={styles.mainBodyContainer}>
+                    <Text style={styles.headerText}>Update Name</Text>
+                    <View style={styles.inputContainer}>
                         <TextInput
-                            className='w-3/4 text-center bg-white rounded-full'
+                            style={styles.inputFields}
                             onChangeText={(text) => setFirstName(text)}
                             value={firstName}
                             autoCapitalize={"words"}
-                       
+
                         />
 
                         <TextInput
-                            className='w-3/4 text-center bg-white rounded-full'
+                            style={styles.inputFields}
                             onChangeText={(text) => setLastName(text)}
                             value={lastName}
                             autoCapitalize={"words"}
-                           
+
 
                         />
                     </View>
-                    <Pressable onPress={() => { console.log(props.lastNamePassed) }}>
-                        <View>
-                            <Text>Logout</Text>
-                        </View>
-                    </Pressable>
-                    <View className='flex flex-row items-center justify-between'>
-                        <Pressable onPress={() => {props.close() }} className="px-2 py-1 bg-white border-4 rounded-full border-primary left-2">
+                    <View style={styles.buttonCotainer}>
+                        <Pressable onPress={() => { props.close() }} style={styles.cancelButton}>
                             <View>
                                 <Text>Cancel</Text>
                             </View>
                         </Pressable>
-                        <Pressable onPress={() => { props.updateVisibleName(firstName, lastName),props.close() }} className="p-2 rounded-full bg-primary right-2">
+                        <Pressable onPress={() => { props.updateVisibleName(firstName, lastName), props.close() }} style={styles.confirmButton}>
                             <View>
                                 <Text className='text-white '>Confirm</Text>
                             </View>
@@ -70,3 +65,61 @@ export default function ProfileModal(props: propValue) {
         </Modal>
     )
 }
+
+
+const styles = StyleSheet.create({
+    modalContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, .8)'
+    },
+    mainBodyContainer: {
+        width: '83.3333%',
+        padding: 16,
+        backgroundColor: 'white',
+        borderRadius: 16,
+    },
+    headerText:
+    {
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: 24,
+        lineHeight: 32
+    },
+    inputContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
+        padding: 16,
+        margin: 12,
+        borderRadius: 12,
+        backgroundColor: ThemeColors['primary/.75']
+    },
+    inputFields: {
+      width:  '75%',
+      textAlign: 'center',
+      backgroundColor: 'white',
+      borderRadius: 999, 
+    },
+    buttonCotainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+    },
+    cancelButton:{
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        backgroundColor: 'white',
+        borderWidth: 4,
+        borderRadius: 999,
+        borderColor: ThemeColors['primary'],
+        left: 8
+    },
+    confirmButton:{
+        padding: 8,
+        borderRadius: 999,
+        backgroundColor: ThemeColors['primary'],
+        right: 8
+    }
+})

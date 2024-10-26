@@ -1,9 +1,12 @@
+//External Imports
 import React, { useState } from "react";
 import { SafeAreaView, Text, StyleSheet, Pressable, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Link } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
+
+//Internal Imports
 import LogoutButton from "@/components/logoutButton";
+import { ThemeColors } from "@/constants/Colors";
 
 
 export default function WelcomeScreen() {
@@ -11,7 +14,7 @@ export default function WelcomeScreen() {
   const [lastName, setLastName] = useState('')
   const [displayMessage, setDisplayMessage] = useState('');
 
-  const [characterList, setCharacterList] = useState()
+  //const [characterList, setCharacterList] = useState()
 
   //Pull Info from Local Storage
   useFocusEffect(() => {
@@ -49,15 +52,17 @@ export default function WelcomeScreen() {
 
   return (
     <SafeAreaView>
-      <View className="flex-row items-center h-8 px-2 py-1 bg-primary/75">
+      
+      <View style={styles.subHeader}>
         {/* <Pressable>
           <View className="bg-white rounded-full py-0.5 px-2">
             <Text >Add Character</Text>
           </View>
         </Pressable> */}
       </View>
-      <View className="flex items-center">
-        <Text className="p-10 text-2xl">{displayMessage} {firstName} {lastName}.</Text>
+      
+      <View style={styles.listContainer}>
+        <Text style={styles.greetingText}>{displayMessage} {firstName} {lastName}.</Text>
         {/* {!characterList &&(
         <View className="flex items-center p-4 rounded bg-primary">
           <Text className="text-xl text-white">You have no characters</Text>
@@ -70,7 +75,29 @@ export default function WelcomeScreen() {
         )} */}
         <LogoutButton/>
       </View>
-        
+      
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  subHeader: {
+    flex: 1,
+    flexDirection: 'row',
+    maxHeight: 32,
+    minHeight: 32,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    backgroundColor: ThemeColors.primary,
+    opacity: .75
+  },
+  listContainer: {
+    alignItems: 'center'
+  },
+  greetingText:{
+    padding: 10,
+    fontSize: 24,
+    lineHeight: 32,
+  }
+  
+})

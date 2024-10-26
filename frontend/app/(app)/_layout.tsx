@@ -1,9 +1,9 @@
-import { Redirect, Stack, router, Link } from 'expo-router';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Redirect, Stack, Link } from 'expo-router';
 import { Pressable } from "react-native";
 import UserIcon from '../../components/userIcon'
 
 import { useSession } from '../../components/auth';
+import { ThemeColors } from "@/constants/Colors";
 
 
 export default function AppLayout() {
@@ -16,7 +16,7 @@ export default function AppLayout() {
   return (
     
     <Stack screenOptions={{headerStyle:{
-      backgroundColor: "#1e3e62"
+      backgroundColor: ThemeColors['primary']
     },
     headerTintColor: '#fff',
     headerTitleAlign: 'center',

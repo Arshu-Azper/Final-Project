@@ -1,15 +1,31 @@
-import { View, Pressable, Text} from 'react-native';
+import { View, Pressable, Text, StyleSheet} from 'react-native';
 import { useSession } from "./auth";
+import { ThemeColors } from "@/constants/Colors";
 
 export default function LogoutButton() {
     const { signOut, session } = useSession();
     return (
-        <Pressable onPress={() => { signOut() }} className="p-4 mt-20 rounded-xl bg-primary">
+        <Pressable onPress={() => { signOut() }} style={styles.LogoutButton}>
             <View>
-                <Text className="text-3xl text-white">Logout</Text>
+                <Text style={styles.LogoutButtonText}>Logout</Text>
             </View>
         </Pressable>
     )
 }
 
+
+const styles = StyleSheet.create({
+    LogoutButton: {
+        padding: 16,
+        marginTop: 80,
+        borderRadius: 12,
+        backgroundColor: ThemeColors['primary']
+    },
+    LogoutButtonText:
+    {
+        fontSize: 30,
+        lineHeight: 36,
+        color: 'white',
+    }
+})
 

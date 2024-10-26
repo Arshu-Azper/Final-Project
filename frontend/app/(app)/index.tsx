@@ -40,7 +40,7 @@ export default function WelcomeScreen() {
       }
     }
     getFromStorage()
-  }, []);
+  });
 
   return (
     <SafeAreaView style={styles.container}>

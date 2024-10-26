@@ -19,31 +19,64 @@ export default function Profile() {
 
     //At first render
     useEffect(() => {
-        async function getFromStorage() {
-            const resultLastName = await AsyncStorage.getItem("lastName");
-            const resultFirstName = await AsyncStorage.getItem("firstName");
-
-            if (resultLastName != null) {
-                setLastName(resultLastName)
-            }
-            if (resultFirstName != null) {
-                setFirstName(resultFirstName)
-            }
-        }
         getFromStorage()
     }, [])
 
 
+    async function getFromStorage() {
+        const resultLastName = await AsyncStorage.getItem("lastName");
+        const resultFirstName = await AsyncStorage.getItem("firstName");
+
+        if (resultLastName != null) {
+            setLastName(resultLastName)
+        }
+        if (resultFirstName != null) {
+            setFirstName(resultFirstName)
+        }
+    }
+
+    async function updateName(updatedFirstName: string, updatedLastName: string) {
+
+        const tokenResult = await AsyncStorage.getItem("token");
+        const url = "http://192.168.1.158:5000/users/update";
+        const body = { token: tokenResult, firstName: updatedFirstName, lastName: updatedLastName};
+
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(body),
+            });
+
+            const result = await response.json();
+            await AsyncStorage.setItem("firstName", updatedFirstName);
+            await AsyncStorage.setItem("lastName", updatedLastName);
+
+            if (result.error) {
+                throw new TypeError('Failed');
+            }
+
+        } catch (error) {
+            console.log("error", error);
+
+        }
+
+        getFromStorage()
+
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             {/* User Icon Holder */}
-            <View className="items-center p-5 border-8 rounded-full aspect-square border-secondary bg-secondary/25">
-                <UserIcon containerSize={122} colorBorder="#168aad"/>
-                <Text className="p-2 text-lg font-semibold text-center">{firstName}, {lastName}</Text>
+            <View className="items-center border-8 rounded-full p-7 aspect-square border-primary bg-primary/25">
+                <UserIcon containerSize={122} colorBorder="#1e6091" />
+                <Text className="p-3 text-lg font-semibold text-center">{firstName} {lastName}</Text>
             </View>
-            
+
             {/* Action Buttons */}
-            <Pressable onPress={() =>{setModalVisible(true)}} className="p-1 border-4 rounded-full border-secondary">
+            <Pressable onPress={() => { setModalVisible(true) }} className="p-1 border-4 rounded-full border-primary">
                 <View>
                     <Text>Update Name</Text>
                 </View>
@@ -54,7 +87,8 @@ export default function Profile() {
                 </View>
             </Pressable>
 
-            <ProfileModal isVisible={modalVisible} firstNamePassed={firstName} lastNamePassed={lastName}/>
+
+            <ProfileModal isVisible={modalVisible} firstNamePassed={firstName} lastNamePassed={lastName} close={() => { setModalVisible(false) }} updateVisibleName={(updatedFirstName, updatedLastName) => { updateName(updatedFirstName, updatedLastName) }} />
         </SafeAreaView>
     )
 }
